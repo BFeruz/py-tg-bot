@@ -1,24 +1,57 @@
 from settings import get_token
-from telegram import Bot
-import time
+from telegram.ext import (
+    Updater, 
+    CommandHandler,
+    MessageHandler,
+    Filters,
+)
+from handlers import (
+    start,
+    echo,
+    ok,
+    echo_photo,
+)
 
-TOKEN = get_token()
 
-bot = Bot(TOKEN)
-
-last_update_id = -1
-
-while True:
-    curr_update = bot.get_updates()[-1]
-
-    if last_update_id != curr_update.update_id:
-        user = curr_update.message.from_user
-        message = curr_update.message
-        bot.send_message(
-            chat_id=user.id,
-            text=message.text
+def main():
+    TOKEN = get_token()
+    
+    # create udpater obj
+    updater = Updater(TOKEN)
+    
+    # create dispatcher obj
+    dispatcher = updater.dispatcher
+    
+    # add command handlers
+    dispatcher.add_handler(
+        handler=CommandHandler(
+            command=['start', 'boshlash'],
+            callback=start
         )
+    )
+    
+    # add message handlers
+    dispatcher.add_handler(
+        handler=MessageHandler(
+            filters=Filters.text('ok'),
+            callback=ok
+        )
+    )
+    dispatcher.add_handler(
+        handler=MessageHandler(
+            filters=Filters.text,
+            callback=echo
+        )
+    )
+    dispatcher.add_handler(
+        handler=MessageHandler(
+            filters=Filters.photo,
+            callback=echo_photo
+        )
+    )
 
-        last_update_id = curr_update.update_id
+    # start polling
+    updater.start_polling()
+    updater.idle()
 
-    time.sleep(0.5)
+main()
