@@ -14,7 +14,11 @@ from handlers import (
 
 
 def main():
-    TOKEN = get_token()
+    try:
+        TOKEN = get_token()
+    except ValueError:
+        print('400')
+        return
     
     # create udpater obj
     updater = Updater(TOKEN)
