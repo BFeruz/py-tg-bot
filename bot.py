@@ -14,12 +14,8 @@ from handlers import (
 
 
 def main():
-    try:
-        TOKEN = get_token()
-    except ValueError:
-        print('400')
-        return
-    
+    TOKEN = get_token()
+
     # create udpater obj
     updater = Updater(TOKEN)
     
@@ -27,32 +23,12 @@ def main():
     dispatcher = updater.dispatcher
     
     # add command handlers
-    dispatcher.add_handler(
-        handler=CommandHandler(
-            command=['start', 'boshlash'],
-            callback=start
-        )
-    )
+    dispatcher.add_handler(handler=CommandHandler(command='start', callback=start))
     
     # add message handlers
-    dispatcher.add_handler(
-        handler=MessageHandler(
-            filters=Filters.text('ok'),
-            callback=ok
-        )
-    )
-    dispatcher.add_handler(
-        handler=MessageHandler(
-            filters=Filters.text,
-            callback=echo
-        )
-    )
-    dispatcher.add_handler(
-        handler=MessageHandler(
-            filters=Filters.photo,
-            callback=echo_photo
-        )
-    )
+    dispatcher.add_handler(handler=MessageHandler(filters=Filters.text('ok'),callback=ok))
+    dispatcher.add_handler(handler=MessageHandler(filters=Filters.text, callback=echo))
+    dispatcher.add_handler(handler=MessageHandler(filters=Filters.photo, callback=echo_photo))
 
     # start polling
     updater.start_polling()
